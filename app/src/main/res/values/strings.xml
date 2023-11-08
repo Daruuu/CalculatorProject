@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">CalculatorProject</string>
+    <string name="str01">Preu inmoble (€)</string>
+    <string name="str02">Estalvis</string>
+    <string name="str03">Plac (anys)</string>
+    <string name="str04">Euribor</string>
+    <string name="str05">Diferencial</string>
+    <string name="button01">CALCULAR</string>
+    <string name="textview_mes">Mes:</string>
+    <string name="textview_total">Total:</string>
+</resources>
