@@ -2,7 +2,6 @@ package com.dasalaza.calculatorproject;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Notification;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,6 +9,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +22,6 @@ public class MainActivity extends AppCompatActivity {
     EditText editText04Euribor;
     EditText editText05Diferencial;
     Button button01Calcular;
-    private Float resultadoHipotecaMes;
-    private Float resultadoHipotecaTotal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,29 +39,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-/*
-                String precioInmueble01 = editText01PrecioInmueble.getText().toString().trim();
-                String estalvis02 = editText02Estalvis.getText().toString().trim();
-                String plac03 = editText03Plac.getText().toString().trim();
-                String euribor04 = editText04Euribor.getText().toString().trim();
-                String diferencial05 = editText05Diferencial.getText().toString().trim();
-
-                Integer precioInmueble01Int = Integer.parseInt(precioInmueble01);
-                Integer estalvis02Int = Integer.parseInt(estalvis02);
-                Integer plac03Int = Integer.parseInt(plac03);
-                Float euribor04Double = Float.parseFloat(euribor04);
-                Float diferencial05Double = Float.parseFloat(diferencial05);
-
-                TextView textView01MesResult = findViewById(R.id.textView01_mes);
-                TextView textView02AnyoResult = findViewById(R.id.textView02_total);
-*/
                 validarDatosUsuarioInput();
-
-                // TODO: Informar del error al usuario. Quitar de la funcion validarDatosUsuario.
-                Toast.makeText(MainActivity.this, "Rellenar los campos correctamente", Toast.LENGTH_SHORT).show();
-                return;
+//                Toast.makeText(MainActivity.this, "Rellenar los campos correctamente", Toast.LENGTH_SHORT).show();
             }
-
         });
     }
 
@@ -72,18 +51,26 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         try {
-            resultadoHipotecaMes = calcularHipotecaMonth();
-            resultadoHipotecaTotal = calcularHipotecaTotal();
-
-/*
-            textView01MesResult.setText("Mes: " + resultadoHipotecaMes + "€");
-            textView02AnyoResult.setText("Total: " + resultadoHipotecaTotal + "€");
-*/
+            float resultadoHipotecaMes = calcularHipotecaMonth();
+            float resultadoHipotecaTotal = calcularHipotecaTotal();
+            updateTextViewsOutput(resultadoHipotecaMes, resultadoHipotecaTotal);
+//            textView01MesResult.setText("Mes: " + resultadoHipotecaMes + "€");
+//            textView02AnyoResult.setText("Total: " + resultadoHipotecaTotal + "€");
             //TODO: limitar rango de MAX VALUE
         } catch (NumberFormatException e) {
             e.printStackTrace();
             Toast.makeText(this, "Error calculating!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void updateTextViewsOutput(float resultadoHipotecaMes, float resultadoHipotecaTotal) {
+        DecimalFormat df = new DecimalFormat("0.00");
+
+        TextView textView01MesResult = findViewById(R.id.textView01_mes);
+        TextView textView02TotalResult = findViewById(R.id.textView02_total);
+        textView01MesResult.setText("Mes: " + df.format(resultadoHipotecaMes) + " €");
+        df.setRoundingMode(RoundingMode.UP);
+        textView02TotalResult.setText(getString(R.string.totalTextView) + df.format(resultadoHipotecaTotal )+ "€");
     }
 
     private boolean comprobarMaxValueInput(Integer integer) {
@@ -130,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
 //        return (Math.round(totalHipoteca * 100d) / 100d);
         return (calcularHipotecaMonth() * 12 * Float.parseFloat(editText03Plac.getText().toString().trim()));
     }
-
+}
 /*
         if (editText01PrecioInmueble.length() == 0)
         {
@@ -159,5 +146,3 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
 */
-}
-        }

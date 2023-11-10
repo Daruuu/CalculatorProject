@@ -8,4 +8,6 @@
     <string name="button01">CALCULAR</string>
     <string name="textview_mes">Mes:</string>
     <string name="textview_total">Total:</string>
+    <string name="mesTextview">"Mes: "</string>
+    <string name="totalTextView">"Total: "</string>
 </resources>
