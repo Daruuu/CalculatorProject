@@ -5,6 +5,8 @@ import static java.sql.Types.NULL;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -85,6 +87,29 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
+
+    private void textviewInputValues()
+    {
+        TextWatcher textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                String precioInmueble = editText01PrecioInmueble.getText().toString().trim();
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        };
+    }
+
+
 
     private boolean checkAllFieldsErrors() {
 
