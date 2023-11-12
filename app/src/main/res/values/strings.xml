@@ -10,4 +10,5 @@
     <string name="textview_total">Total: 0</string>
     <string name="mesTextview">"Mes: "</string>
     <string name="totalTextView">"Total: "</string>
+    <string name="titleApp">Hipoteques</string>
 </resources>

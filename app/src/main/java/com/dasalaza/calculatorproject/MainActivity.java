@@ -9,7 +9,9 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
     private EditText editText03Plac;
     private EditText editText04Euribor;
     private EditText editText05Diferencial;
-    private Button button01Calcular;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +37,12 @@ public class MainActivity extends AppCompatActivity {
         editText03Plac = findViewById(R.id.editText03_plac);
         editText04Euribor = findViewById(R.id.editText04_euribor);
         editText05Diferencial = findViewById(R.id.editText05_diferencial);
-        button01Calcular = findViewById(R.id.button01_calcular);
 
+        Button button01Calcular = findViewById(R.id.button01_calcular);
+        TextView editTextEuribor04Switch = findViewById(R.id.str04_euribor);
+        Switch aSwitch = findViewById(R.id.switch01);
+
+        //LISTENERS FOR EACH EDITTEXT
         editText01PrecioInmueble.addTextChangedListener(textWatcher);
         editText02Estalvis.addTextChangedListener(textWatcher);
         editText03Plac.addTextChangedListener(textWatcher);
@@ -46,23 +51,39 @@ public class MainActivity extends AppCompatActivity {
         button01Calcular.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // euribor = 0
                 validarDatosUsuarioInput();
+            }
+        });
+
+        aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    editText04Euribor.setVisibility(View.GONE);
+                    editTextEuribor04Switch.setVisibility(View.GONE);
+                    editText04Euribor.setText("0");
+                } else {
+                    editText04Euribor.setVisibility(View.VISIBLE);
+                    editTextEuribor04Switch.setVisibility(View.VISIBLE);
+                }
             }
         });
     }
 
     private void validarDatosUsuarioInput() {
-
-        if (!checkAllFieldsErrors()) {
+        if (!checkAllErrorsFields()) {
             return;
         }
         try {
-            double resultadoHipotecaMes = calcularHipotecaMonth();
-            double resultadoHipotecaTotal = calcularHipotecaTotal();
+            double resultadoHipotecaMes = calculateHipotecaMonth();
+            double resultadoHipotecaTotal = calculateHipotecaTotal();
             updateTextViewsOutput(resultadoHipotecaMes, resultadoHipotecaTotal);
         } catch (NumberFormatException e) {
             e.printStackTrace();
+/*
             Toast.makeText(this, "Error calculating!", Toast.LENGTH_SHORT).show();
+*/
         }
     }
 
@@ -71,59 +92,83 @@ public class MainActivity extends AppCompatActivity {
         TextView textView01MesResult = findViewById(R.id.textView01_mes);
         TextView textView02TotalResult = findViewById(R.id.textView02_total);
         textView01MesResult.setText("Mes: " + df.format(resultadoHipotecaMes) + " €");
-        textView02TotalResult.setText("Total: " + df.format(resultadoHipotecaTotal) + "€");
+        textView02TotalResult.setText("Total: " + df.format(resultadoHipotecaTotal) + " €");
     }
 
-    /*
-        private boolean comprobarMaxValueInput(Integer integer) {
-            if (integer >= Integer.MAX_VALUE) {
-                Toast.makeText(this, "Invalid length number!", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-            return true;
-        }
-    */
-    private TextWatcher textWatcher = new TextWatcher() {
+    private final TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
+
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
         }
+
         @Override
         public void afterTextChanged(Editable s) {
             validarDatosUsuarioInput();
         }
     };
 
-    private boolean checkAllFieldsErrors() {
+    private boolean checkEmptyFieldsInput() {
+        List<EditText> listEditTexts = new ArrayList<>();
+        listEditTexts.add(editText01PrecioInmueble);
+        listEditTexts.add(editText02Estalvis);
+        listEditTexts.add(editText03Plac);
+        listEditTexts.add(editText04Euribor);
+        listEditTexts.add(editText05Diferencial);
 
-        List<EditText> listValues = new ArrayList<>();
-        listValues.add(editText01PrecioInmueble);
-        listValues.add(editText02Estalvis);
-        listValues.add(editText03Plac);
-        listValues.add(editText04Euribor);
-        listValues.add(editText05Diferencial);
-
-        for (EditText fieldText : listValues) {
+        for (EditText fieldText : listEditTexts) {
             if (fieldText.length() == NULL) {
                 fieldText.setError("This field is empty!");
                 return false;
             }
         }
-        int editText01 = Integer.parseInt(editText01PrecioInmueble.getText().toString().trim());
+        return true;
+    }
+
+    private boolean checkEstalvisLength() {
+//        int editText01 = Integer.parseInt(editText01PrecioInmueble.getText().toString().trim());
+        long editText01= Long.parseLong(editText01PrecioInmueble.getText().toString().trim());
         int editText02 = Integer.parseInt(editText02Estalvis.getText().toString().trim());
-        if (editText02 > editText01)
-        {
+        if (editText02 > editText01) {
             Toast.makeText(this, "Invalid length: Estalvis!", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
     }
 
-    private double calcularHipotecaMonth() {
+    private boolean checkMaxEuribor() {
+        double euribor04Double = Double.parseDouble(editText04Euribor.getText().toString().trim());
+        double limitEuribor = 6.0;
+        if (euribor04Double > limitEuribor)
+        {
+            Toast.makeText(this, "max value of euribor is: " + limitEuribor + "!", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+    private boolean checkAllErrorsFields() {
+        try {
+            if (!checkEmptyFieldsInput())
+                return false;
+            if (!checkEstalvisLength())
+                return false;
+            if (!checkMaxEuribor())
+                return false;
+        } catch (NumberFormatException e)
+        {
+            e.printStackTrace();
+            Toast.makeText(this, "Invalid max length number!" , Toast.LENGTH_SHORT).show();
+        }
+        return true;
+    }
 
-        int precioInmueble01Int = Integer.parseInt(editText01PrecioInmueble.getText().toString().trim());
+
+    private double calculateHipotecaMonth() {
+
+//        int precioInmueble01Int = Integer.parseInt(editText01PrecioInmueble.getText().toString().trim());
+        long precioInmueble01Int = Long.parseLong(editText01PrecioInmueble.getText().toString().trim());
         int estalvis02Int = Integer.parseInt(editText02Estalvis.getText().toString().trim());
         int plac03Int = Integer.parseInt(editText03Plac.getText().toString().trim());
         double euribor04Double = Double.parseDouble(editText04Euribor.getText().toString().trim());
@@ -136,8 +181,8 @@ public class MainActivity extends AppCompatActivity {
         return ((capital * interes) / (100.0 * (1 - Math.pow(1 + (interes / 100.0), -plazoTotal))));
     }
 
-    private double calcularHipotecaTotal() {
-        double resultMes = calcularHipotecaMonth();
+    private double calculateHipotecaTotal() {
+        double resultMes = calculateHipotecaMonth();
         return ((resultMes * 12 * Double.parseDouble(editText03Plac.getText().toString().trim())));
     }
 }
