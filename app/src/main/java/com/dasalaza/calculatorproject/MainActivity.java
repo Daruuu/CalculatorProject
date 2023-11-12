@@ -51,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
         button01Calcular.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // euribor = 0
                 validarDatosUsuarioInput();
             }
         });
@@ -81,9 +80,6 @@ public class MainActivity extends AppCompatActivity {
             updateTextViewsOutput(resultadoHipotecaMes, resultadoHipotecaTotal);
         } catch (NumberFormatException e) {
             e.printStackTrace();
-/*
-            Toast.makeText(this, "Error calculating!", Toast.LENGTH_SHORT).show();
-*/
         }
     }
 
@@ -128,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean checkEstalvisLength() {
-//        int editText01 = Integer.parseInt(editText01PrecioInmueble.getText().toString().trim());
         long editText01= Long.parseLong(editText01PrecioInmueble.getText().toString().trim());
         int editText02 = Integer.parseInt(editText02Estalvis.getText().toString().trim());
         if (editText02 > editText01) {
@@ -167,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
 
     private double calculateHipotecaMonth() {
 
-//        int precioInmueble01Int = Integer.parseInt(editText01PrecioInmueble.getText().toString().trim());
         long precioInmueble01Int = Long.parseLong(editText01PrecioInmueble.getText().toString().trim());
         int estalvis02Int = Integer.parseInt(editText02Estalvis.getText().toString().trim());
         int plac03Int = Integer.parseInt(editText03Plac.getText().toString().trim());
